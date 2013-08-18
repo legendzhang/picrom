@@ -111,12 +111,9 @@ return false;    // serve the requested resource as-is.
           <div class="navbar-inner">
             <div class="container">
               <ul class="nav">
-                <li class="active"><a href="#">主页</a></li>
-                <li><a href="#">项目</a></li>
-                <li><a href="#">交流</a></li>
-                <li><a href="#">下载</a></li>
-                <li><a href="#">关于我</a></li>
-                <li><a href="#">联系方式</a></li>
+                <li class="active"><a href="#">PicROM</a></li>
+                <li><a href="http://picrom.sinaapp.com">项目主页</a></li>
+                <li><a href="http://weibo.com/redhorse4u">联系方式</a></li>
               </ul>
             </div>
           </div>
@@ -124,22 +121,28 @@ return false;    // serve the requested resource as-is.
       </div>
 
       <!-- Jumbotron -->
+      <div class="jumbotron">
+        <p class="lead">根据我十多年数字照片视频保存经验，你应该准备两个1T的硬盘来保存备份的内容。</p>
+        <a class="btn btn-large btn-success" href="#">照片视频收录了我们的生人！</a>
+      </div>
+
+      <hr>
 
       <!-- Example row of columns -->
       <div class="row-fluid">
         <div class="span4">
           <h2>移动</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn" href="#">移动 照片视频 &raquo;</a></p>
+          <p>复制文件到目标目录，然后删除源文件</p>
+          <p><a class="btn" href="movepic.php">移动 照片视频 &raquo;</a></p>
         </div>
         <div class="span4">
           <h2>复制</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn" href="#">复制 照片视频 &raquo;</a></p>
+          <p>仅复制文件到目标目录，不删除源文件</p>
+          <p><a class="btn" href="copypic.php">复制 照片视频 &raquo;</a></p>
        </div>
         <div class="span4">
           <h2>管理</h2>
-          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa.</p>
+          <p>清空无用空目录</p>
           <p><a class="btn" href="#">清楚空目录 &raquo;</a></p>
         </div>
       </div>

@@ -1,1 +1,283 @@
-<?phpecho "===================================================\n";$notFound = "Unavailable";$rootdir = "C:\¿ìÅÌ\µ¼ÈëÕÕÆ¬";if (!is_dir($rootdir))    mkdir($rootdir);$list = file_list(".", '/\.jpg$/i');deletealltemptyfolder(".");//var_dump($list);echo "\n===================================================";/** * Goofy 2011-11-30 * getDir()È¥ÎÄ¼ş¼ĞÁĞ±í£¬getFile()È¥¶ÔÓ¦ÎÄ¼ş¼ĞÏÂÃæµÄÎÄ¼şÁĞ±í,¶şÕßµÄÇø±ğÔÚÓÚÅĞ¶ÏÓĞÃ»ÓĞ¡°.¡±ºó×ºµÄÎÄ¼ş£¬ÆäËû¶¼Ò»Ñù *///»ñÈ¡ÎÄ¼şÄ¿Â¼ÁĞ±í,¸Ã·½·¨·µ»ØÊı×éfunction getDir($dir){    $dirArray[] = null;    if (false != ($handle = opendir($dir))) {        $i = 0;        while (false !== ($file = readdir($handle))) {            //È¥µô"¡°.¡±¡¢¡°..¡±ÒÔ¼°´ø¡°.xxx¡±ºó×ºµÄÎÄ¼ş            if ($file != "." && $file != ".." && !strpos($file, ".")) {                $dirArray[$i] = $file;                $i++;            }        }        //¹Ø±Õ¾ä±ú        closedir($handle);    }    return $dirArray;}//»ñÈ¡ÎÄ¼şÁĞ±ífunction getFile($dir){    $fileArray[] = null;    if (false != ($handle = opendir($dir))) {        while (false !== ($file = readdir($handle))) {            //È¥µô"¡°.¡±¡¢¡°..¡±ÒÔ¼°´ø¡°.xxx¡±ºó×ºµÄÎÄ¼ş            if ($file != "." && $file != ".." && strpos($file, ".") && strtolower(substr($file,                -3, 3)) == "jpg") {                $fileArray[] = $dir . "/" . $file;            }        }        //¹Ø±Õ¾ä±ú        closedir($handle);    }    return $fileArray;}/**	µİ¹é»ñÈ¡Ö¸¶¨Â·¾¶ÏÂµÄËùÓĞÎÄ¼ş»òÆ¥ÅäÖ¸¶¨ÕıÔòµÄÎÄ¼ş£¨²»°üÀ¨¡°.¡±ºÍ¡°..¡±£©£¬½á¹ûÒÔÊı×éĞÎÊ½·µ»Ø*	@param	string	$dir*	@param	string	$pattern*	@return	array*/function deletealltemptyfolder($dir, $pattern = ""){    global $notFound;    global $rootdir;    $arr = array();    $dir_handle = opendir($dir);    if ($dir_handle) {        // ÕâÀï±ØĞëÑÏ¸ñ±È½Ï£¬ÒòÎª·µ»ØµÄÎÄ¼şÃû¿ÉÄÜÊÇ¡°0¡±        while (($file = readdir($dir_handle)) !== false) {            if ($file === '.' || $file === '..') {                continue;            }            $tmp = realpath($dir . '/' . $file);            if (is_dir($tmp)) {                if (is_file($tmp . "/Thumbs.db"))                    unlink($tmp . "/Thumbs.db");                if (is_file($tmp . "/.picasa.ini"))                    unlink($tmp . "/.picasa.ini");                if (is_file($tmp . "/Picasa.ini"))                    unlink($tmp . "/Picasa.ini");                if (is_file($tmp . "/NIKON001.DSC"))                    unlink($tmp . "/NIKON001.DSC");                $retArr = deletealltemptyfolder($tmp, $pattern);                if (!empty($retArr)) {                    $arr[] = $tmp;                } else {                    rmdir($tmp);                    echo "É¾³ıÄ¿Â¼£º$tmp\n";                }            } else {                $arr[] = $tmp;            }        }        closedir($dir_handle);    }    return $arr;}/**	µİ¹é»ñÈ¡Ö¸¶¨Â·¾¶ÏÂµÄËùÓĞÎÄ¼ş»òÆ¥ÅäÖ¸¶¨ÕıÔòµÄÎÄ¼ş£¨²»°üÀ¨¡°.¡±ºÍ¡°..¡±£©£¬½á¹ûÒÔÊı×éĞÎÊ½·µ»Ø*	@param	string	$dir*	@param	string	$pattern*	@return	array*/function file_list($dir, $pattern = ""){    global $notFound;    global $rootdir;    $arr = array();    $dir_handle = opendir($dir);    if ($dir_handle) {        // ÕâÀï±ØĞëÑÏ¸ñ±È½Ï£¬ÒòÎª·µ»ØµÄÎÄ¼şÃû¿ÉÄÜÊÇ¡°0¡±        while (($file = readdir($dir_handle)) !== false) {            if ($file === '.' || $file === '..') {                continue;            }            $tmp = realpath($dir . '/' . $file);            if (is_dir($tmp)) {                $retArr = file_list($tmp, $pattern);                if (!empty($retArr)) {                    $arr[] = $retArr;                }            } else {                if ($pattern === "" || preg_match($pattern, $tmp)) {                    $arr[] = $tmp;                    $camera = cameraUsed($tmp);                    if ($camera) {                        echo $tmp . "\n";                        echo $file . "\n";                        echo $camera['datetime'] . "\n";                        //echo $camera['make']."\n";                        //echo $camera['model']."\n";                        $phototime = "";                        if ($camera['datetime'] != "Unavailable") {                            $phototime = $camera['datetime'];                        } else                            if ($camera['date'] != "Unavailable") {                                $phototime = $camera['date'];                            }                        if ($phototime != "" && preg_match('/(20|19)([0-9][0-9])[-._: ]?([0-9][0-9])[-._: ]?([0-9][0-9]) ([0-9][0-9]):([0-9][0-9]):([0-9][0-9])/i',                            $phototime)) {                            $year = substr($phototime, 0, 4);                            $month = substr($phototime, 5, 2);                            $day = substr($phototime, 8, 2);                            $hour = substr($phototime, 11, 2);                            $minute = substr($phototime, 14, 2);                            $second = substr($phototime, 17, 2);                            if ($year != "0000" && $month != "00" && $day != "00") {                                $day_dir = $rootdir . "/" . $year . $month . $day;                                if (!is_dir($day_dir))                                    mkdir($day_dir);                                $dest_filename = $day_dir . "/" . $year . $month . $day . "_" . $hour . $minute .                                    $second;                                $filename = $dest_filename;                                $i = 0;                                $filesizearray = array();                                while (1) {                                    if (is_file($filename . ".jpg")) {                                        $filesizearray[] = filesize($filename . ".jpg");                                        $i++;                                        $filename = $dest_filename . "_" . $i;                                    } else {                                        if ($i > 0) {                                            $found = false;                                            foreach ($filesizearray as $filesize) {                                                if ($filesize == filesize($tmp)) {                                                    $found = true;                                                    break;                                                }                                            }                                            if (!$found) {                                                rename($tmp, $filename . ".jpg");                                                echo "ÒÆ¶¯ µ½: " . $filename . ".jpg" . "\n\n\n";                                            } else {                                                echo "ÖØ¸´ÎÄ¼ş.......... \n\n\n";                                                if (unlink($tmp)) {                                                    echo "³É¹¦É¾³ı\n";                                                } else {                                                    echo "ÎÄ¼şÉ¾³ıÊ§°Ü\n";                                                }                                            }                                        } else {                                            rename($tmp, $filename . ".jpg");                                            echo "ÒÆ¶¯ µ½: " . $filename . ".jpg" . "\n\n\n";                                        }                                        break;                                    }                                }                            }                        } else {                            echo  "²»ÒÆ¶¯£ºÎÄ¼şÃû ²»Æ¥Åä\n";                        }                    }                }            }        }        closedir($dir_handle);    }    return $arr;}// This function is used to determine the camera details for a specific image. It returns an array with the parameters.function cameraUsed($imagePath){    // Check if the variable is set and if the file itself exists before continuing    if ((isset($imagePath)) and (file_exists($imagePath))) {        // There are 2 arrays which contains the information we are after, so it's easier to state them both        $exif_ifd0 = read_exif_data($imagePath, 'IFD0', 0);        $exif_exif = read_exif_data($imagePath, 'EXIF', 0);        //error control        $notFound = "Unavailable";        // Make        if (@array_key_exists('Make', $exif_ifd0)) {            $camMake = $exif_ifd0['Make'];        } else {            $camMake = $notFound;        }        // Model        if (@array_key_exists('Model', $exif_ifd0)) {            $camModel = $exif_ifd0['Model'];        } else {            $camModel = $notFound;        }        // Exposure        if (@array_key_exists('ExposureTime', $exif_ifd0)) {            $camExposure = $exif_ifd0['ExposureTime'];        } else {            $camExposure = $notFound;        }        // Aperture        if (@array_key_exists('ApertureFNumber', $exif_ifd0['COMPUTED'])) {            $camAperture = $exif_ifd0['COMPUTED']['ApertureFNumber'];        } else {            $camAperture = $notFound;        }        // Date        if (@array_key_exists('DateTime', $exif_ifd0)) {            $camDate = $exif_ifd0['DateTime'];        } else {            $camDate = $notFound;        }        // ISO        if (@array_key_exists('ISOSpeedRatings', $exif_exif)) {            $camIso = $exif_exif['ISOSpeedRatings'];        } else {            $camIso = $notFound;        }        // ISO        if (@array_key_exists('DateTimeOriginal', $exif_exif)) {            $camDateTime = $exif_exif['DateTimeOriginal'];        } else {            $camDateTime = $notFound;        }        $return = array();        $return['make'] = $camMake;        $return['model'] = $camModel;        $return['exposure'] = $camExposure;        $return['aperture'] = $camAperture;        $return['date'] = $camDate;        $return['iso'] = $camIso;        $return['datetime'] = $camDateTime;        return $return;    } else {        return false;    }}?> 
+<?php
+echo "<hr/>";
+$notFound = "Unavailable";
+$rootdir = "C:\å¯¼å…¥ç…§ç‰‡";
+if (!is_dir($rootdir))
+    mkdir($rootdir);
+$list = file_list("pics", '/\.jpg$/i');
+deletealltemptyfolder("pics");
+//var_dump($list);
+echo "<hr/>";
+
+/**
+ * Goofy 2011-11-30
+ * getDir()å»æ–‡ä»¶å¤¹åˆ—è¡¨ï¼ŒgetFile()å»å¯¹åº”æ–‡ä»¶å¤¹ä¸‹é¢çš„æ–‡ä»¶åˆ—è¡¨,äºŒè€…çš„åŒºåˆ«åœ¨äºåˆ¤æ–­æœ‰æ²¡æœ‰â€œ.â€åç¼€çš„æ–‡ä»¶ï¼Œå…¶ä»–éƒ½ä¸€æ ·
+ */
+
+//è·å–æ–‡ä»¶ç›®å½•åˆ—è¡¨,è¯¥æ–¹æ³•è¿”å›æ•°ç»„
+function getDir($dir)
+{
+    $dirArray[] = null;
+    if (false != ($handle = opendir($dir))) {
+        $i = 0;
+        while (false !== ($file = readdir($handle))) {
+            //å»æ‰"â€œ.â€ã€â€œ..â€ä»¥åŠå¸¦â€œ.xxxâ€åç¼€çš„æ–‡ä»¶
+            if ($file != "." && $file != ".." && !strpos($file, ".")) {
+                $dirArray[$i] = $file;
+                $i++;
+            }
+        }
+        //å…³é—­å¥æŸ„
+        closedir($handle);
+    }
+    return $dirArray;
+}
+
+//è·å–æ–‡ä»¶åˆ—è¡¨
+function getFile($dir)
+{
+    $fileArray[] = null;
+    if (false != ($handle = opendir($dir))) {
+        while (false !== ($file = readdir($handle))) {
+            //å»æ‰"â€œ.â€ã€â€œ..â€ä»¥åŠå¸¦â€œ.xxxâ€åç¼€çš„æ–‡ä»¶
+            if ($file != "." && $file != ".." && strpos($file, ".") && strtolower(substr($file,
+                -3, 3)) == "jpg") {
+                $fileArray[] = $dir . "/" . $file;
+            }
+        }
+        //å…³é—­å¥æŸ„
+        closedir($handle);
+    }
+    return $fileArray;
+}
+
+/*
+*	é€’å½’è·å–æŒ‡å®šè·¯å¾„ä¸‹çš„æ‰€æœ‰æ–‡ä»¶æˆ–åŒ¹é…æŒ‡å®šæ­£åˆ™çš„æ–‡ä»¶ï¼ˆä¸åŒ…æ‹¬â€œ.â€å’Œâ€œ..â€ï¼‰ï¼Œç»“æœä»¥æ•°ç»„å½¢å¼è¿”å›
+*	@param	string	$dir
+*	@param	string	$pattern
+*	@return	array
+*/
+function deletealltemptyfolder($dir, $pattern = "")
+{
+    global $notFound;
+    global $rootdir;
+
+    $arr = array();
+    $dir_handle = opendir($dir);
+    if ($dir_handle) {
+        // è¿™é‡Œå¿…é¡»ä¸¥æ ¼æ¯”è¾ƒï¼Œå› ä¸ºè¿”å›çš„æ–‡ä»¶åå¯èƒ½æ˜¯â€œ0â€
+        while (($file = readdir($dir_handle)) !== false) {
+            if ($file === '.' || $file === '..') {
+                continue;
+            }
+            $tmp = realpath($dir . '/' . $file);
+            if (is_dir($tmp)) {
+                if (is_file($tmp . "/Thumbs.db"))
+                    unlink($tmp . "/Thumbs.db");
+                if (is_file($tmp . "/.picasa.ini"))
+                    unlink($tmp . "/.picasa.ini");
+                if (is_file($tmp . "/Picasa.ini"))
+                    unlink($tmp . "/Picasa.ini");
+                if (is_file($tmp . "/NIKON001.DSC"))
+                    unlink($tmp . "/NIKON001.DSC");
+                $retArr = deletealltemptyfolder($tmp, $pattern);
+                if (!empty($retArr)) {
+                    $arr[] = $tmp;
+                } else {
+                    rmdir($tmp);
+                    echo "åˆ é™¤ç›®å½•ï¼š$tmp<p/>";
+                }
+            } else {
+                $arr[] = $tmp;
+            }
+        }
+        closedir($dir_handle);
+    }
+    return $arr;
+}
+
+
+/*
+*	é€’å½’è·å–æŒ‡å®šè·¯å¾„ä¸‹çš„æ‰€æœ‰æ–‡ä»¶æˆ–åŒ¹é…æŒ‡å®šæ­£åˆ™çš„æ–‡ä»¶ï¼ˆä¸åŒ…æ‹¬â€œ.â€å’Œâ€œ..â€ï¼‰ï¼Œç»“æœä»¥æ•°ç»„å½¢å¼è¿”å›
+*	@param	string	$dir
+*	@param	string	$pattern
+*	@return	array
+*/
+function file_list($dir, $pattern = "")
+{
+    global $notFound;
+    global $rootdir;
+
+    $arr = array();
+    $dir_handle = opendir($dir);
+    if ($dir_handle) {
+        // è¿™é‡Œå¿…é¡»ä¸¥æ ¼æ¯”è¾ƒï¼Œå› ä¸ºè¿”å›çš„æ–‡ä»¶åå¯èƒ½æ˜¯â€œ0â€
+        while (($file = readdir($dir_handle)) !== false) {
+            if ($file === '.' || $file === '..') {
+                continue;
+            }
+            $tmp = realpath($dir . '/' . $file);
+            if (is_dir($tmp)) {
+                $retArr = file_list($tmp, $pattern);
+                if (!empty($retArr)) {
+                    $arr[] = $retArr;
+                }
+            } else {
+                if ($pattern === "" || preg_match($pattern, $tmp)) {
+                    $arr[] = $tmp;
+                    $camera = cameraUsed($tmp);
+                    if ($camera) {
+                        echo $tmp . "<p/>";
+                        echo $file . "<p/>";
+                        echo $camera['datetime'] . "<p/>";
+                        //echo $camera['make']."<p/>";
+                        //echo $camera['model']."<p/>";
+                        $phototime = "";
+                        if ($camera['datetime'] != "Unavailable") {
+                            $phototime = $camera['datetime'];
+                        } else
+                            if ($camera['date'] != "Unavailable") {
+                                $phototime = $camera['date'];
+                            }
+                        if ($phototime != "" && preg_match('/(20|19)([0-9][0-9])[-._: ]?([0-9][0-9])[-._: ]?([0-9][0-9]) ([0-9][0-9]):([0-9][0-9]):([0-9][0-9])/i',
+                            $phototime)) {
+                            $year = substr($phototime, 0, 4);
+                            $month = substr($phototime, 5, 2);
+                            $day = substr($phototime, 8, 2);
+                            $hour = substr($phototime, 11, 2);
+                            $minute = substr($phototime, 14, 2);
+                            $second = substr($phototime, 17, 2);
+                            if ($year != "0000" && $month != "00" && $day != "00") {
+                                $day_dir = $rootdir . "/" . $year . $month . $day;
+                                if (!is_dir($day_dir))
+                                    mkdir($day_dir);
+                                $dest_filename = $day_dir . "/" . $year . $month . $day . "_" . $hour . $minute .
+                                    $second;
+                                $filename = $dest_filename;
+                                $i = 0;
+                                $filesizearray = array();
+                                while (1) {
+                                    if (is_file($filename . ".jpg")) {
+                                        $filesizearray[] = filesize($filename . ".jpg");
+                                        $i++;
+                                        $filename = $dest_filename . "_" . $i;
+                                    } else {
+                                        if ($i > 0) {
+                                            $found = false;
+                                            foreach ($filesizearray as $filesize) {
+                                                if ($filesize == filesize($tmp)) {
+                                                    $found = true;
+                                                    break;
+                                                }
+                                            }
+                                            if (!$found) {
+                                                rename($tmp, $filename . ".jpg");
+                                                echo "ç§»åŠ¨ åˆ°: " . $filename . ".jpg" . "<p/><p/><p/>";
+                                            } else {
+                                                echo "é‡å¤æ–‡ä»¶.......... <p/><p/><p/>";
+                                                if (unlink($tmp)) {
+                                                    echo "æˆåŠŸåˆ é™¤<p/>";
+                                                } else {
+                                                    echo "æ–‡ä»¶åˆ é™¤å¤±è´¥<p/>";
+                                                }
+                                            }
+                                        } else {
+                                            rename($tmp, $filename . ".jpg");
+                                            echo "ç§»åŠ¨ åˆ°: " . $filename . ".jpg" . "<p/><p/><p/>";
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                        } else {
+                            echo  "ä¸ç§»åŠ¨ï¼šæ–‡ä»¶å ä¸åŒ¹é…<p/>";
+                        }
+                    }
+                }
+            }
+        }
+        closedir($dir_handle);
+    }
+    return $arr;
+}
+
+
+// This function is used to determine the camera details for a specific image. It returns an array with the parameters.
+function cameraUsed($imagePath)
+{
+
+    // Check if the variable is set and if the file itself exists before continuing
+    if ((isset($imagePath)) and (file_exists($imagePath))) {
+
+        // There are 2 arrays which contains the information we are after, so it's easier to state them both
+        $exif_ifd0 = read_exif_data($imagePath, 'IFD0', 0);
+        $exif_exif = read_exif_data($imagePath, 'EXIF', 0);
+
+        //error control
+        $notFound = "Unavailable";
+
+        // Make
+        if (@array_key_exists('Make', $exif_ifd0)) {
+            $camMake = $exif_ifd0['Make'];
+        } else {
+            $camMake = $notFound;
+        }
+
+        // Model
+        if (@array_key_exists('Model', $exif_ifd0)) {
+            $camModel = $exif_ifd0['Model'];
+        } else {
+            $camModel = $notFound;
+        }
+
+        // Exposure
+        if (@array_key_exists('ExposureTime', $exif_ifd0)) {
+            $camExposure = $exif_ifd0['ExposureTime'];
+        } else {
+            $camExposure = $notFound;
+        }
+
+        // Aperture
+        if (@array_key_exists('ApertureFNumber', $exif_ifd0['COMPUTED'])) {
+            $camAperture = $exif_ifd0['COMPUTED']['ApertureFNumber'];
+        } else {
+            $camAperture = $notFound;
+        }
+
+        // Date
+        if (@array_key_exists('DateTime', $exif_ifd0)) {
+            $camDate = $exif_ifd0['DateTime'];
+        } else {
+            $camDate = $notFound;
+        }
+
+        // ISO
+        if (@array_key_exists('ISOSpeedRatings', $exif_exif)) {
+            $camIso = $exif_exif['ISOSpeedRatings'];
+        } else {
+            $camIso = $notFound;
+        }
+
+        // ISO
+        if (@array_key_exists('DateTimeOriginal', $exif_exif)) {
+            $camDateTime = $exif_exif['DateTimeOriginal'];
+        } else {
+            $camDateTime = $notFound;
+        }
+
+        $return = array();
+        $return['make'] = $camMake;
+        $return['model'] = $camModel;
+        $return['exposure'] = $camExposure;
+        $return['aperture'] = $camAperture;
+        $return['date'] = $camDate;
+        $return['iso'] = $camIso;
+        $return['datetime'] = $camDateTime;
+        return $return;
+
+    } else {
+        return false;
+    }
+}
+
+?> 
