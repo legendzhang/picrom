@@ -150,7 +150,7 @@ return false;    // serve the requested resource as-is.
           <h2>管理</h2>
           <p>清空无用空目录</p>
           <p>&nbsp</p>
-          <p><a class="btn" href="#">清楚空目录 &raquo;</a></p>
+          <p><a class="btn" href="rmempty.php">清楚空目录 &raquo;</a></p>
         </div>
       </div>
 
