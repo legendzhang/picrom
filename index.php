@@ -133,16 +133,23 @@ return false;    // serve the requested resource as-is.
         <div class="span4">
           <h2>移动</h2>
           <p>复制文件到目标目录，然后删除源文件</p>
+          <p>请将源照片视频放在picrom的pics目录下。</p>
+          <p>程序会输出文件到c:\picrom目录下。</p>
+          <p>&nbsp</p>
           <p><a class="btn" href="movepic.php">移动 照片视频 &raquo;</a></p>
         </div>
         <div class="span4">
           <h2>复制</h2>
           <p>仅复制文件到目标目录，不删除源文件</p>
+          <p>请将源照片视频放在picrom的pics目录下。</p>
+          <p>程序会输出文件到c:\picrom目录下。</p>
+          <p>&nbsp</p>
           <p><a class="btn" href="copypic.php">复制 照片视频 &raquo;</a></p>
        </div>
         <div class="span4">
           <h2>管理</h2>
           <p>清空无用空目录</p>
+          <p>&nbsp</p>
           <p><a class="btn" href="#">清楚空目录 &raquo;</a></p>
         </div>
       </div>

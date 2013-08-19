@@ -1,7 +1,7 @@
 <?php
 echo "<hr/>";
 $notFound = "Unavailable";
-$rootdir = "C:\å¯¼å…¥ç…§ç‰‡";
+$rootdir = "C:\picrom";
 if (!is_dir($rootdir))
     mkdir($rootdir);
 $list = file_list("pics", '/\.jpg$/i');
@@ -11,48 +11,48 @@ echo "<hr/>";
 
 /**
  * Goofy 2011-11-30
- * getDir()å»æ–‡ä»¶å¤¹åˆ—è¡¨ï¼ŒgetFile()å»å¯¹åº”æ–‡ä»¶å¤¹ä¸‹é¢çš„æ–‡ä»¶åˆ—è¡¨,äºŒè€…çš„åŒºåˆ«åœ¨äºåˆ¤æ–­æœ‰æ²¡æœ‰â€œ.â€åç¼€çš„æ–‡ä»¶ï¼Œå…¶ä»–éƒ½ä¸€æ ·
+ * getDir()È¥ÎÄ¼ş¼ĞÁĞ±í£¬getFile()È¥¶ÔÓ¦ÎÄ¼ş¼ĞÏÂÃæµÄÎÄ¼şÁĞ±í,¶şÕßµÄÇø±ğÔÚÓÚÅĞ¶ÏÓĞÃ»ÓĞ¡°.¡±ºó×ºµÄÎÄ¼ş£¬ÆäËû¶¼Ò»Ñù
  */
 
-//è·å–æ–‡ä»¶ç›®å½•åˆ—è¡¨,è¯¥æ–¹æ³•è¿”å›æ•°ç»„
+//»ñÈ¡ÎÄ¼şÄ¿Â¼ÁĞ±í,¸Ã·½·¨·µ»ØÊı×é
 function getDir($dir)
 {
     $dirArray[] = null;
     if (false != ($handle = opendir($dir))) {
         $i = 0;
         while (false !== ($file = readdir($handle))) {
-            //å»æ‰"â€œ.â€ã€â€œ..â€ä»¥åŠå¸¦â€œ.xxxâ€åç¼€çš„æ–‡ä»¶
+            //È¥µô"¡°.¡±¡¢¡°..¡±ÒÔ¼°´ø¡°.xxx¡±ºó×ºµÄÎÄ¼ş
             if ($file != "." && $file != ".." && !strpos($file, ".")) {
                 $dirArray[$i] = $file;
                 $i++;
             }
         }
-        //å…³é—­å¥æŸ„
+        //¹Ø±Õ¾ä±ú
         closedir($handle);
     }
     return $dirArray;
 }
 
-//è·å–æ–‡ä»¶åˆ—è¡¨
+//»ñÈ¡ÎÄ¼şÁĞ±í
 function getFile($dir)
 {
     $fileArray[] = null;
     if (false != ($handle = opendir($dir))) {
         while (false !== ($file = readdir($handle))) {
-            //å»æ‰"â€œ.â€ã€â€œ..â€ä»¥åŠå¸¦â€œ.xxxâ€åç¼€çš„æ–‡ä»¶
+            //È¥µô"¡°.¡±¡¢¡°..¡±ÒÔ¼°´ø¡°.xxx¡±ºó×ºµÄÎÄ¼ş
             if ($file != "." && $file != ".." && strpos($file, ".") && strtolower(substr($file,
                 -3, 3)) == "jpg") {
                 $fileArray[] = $dir . "/" . $file;
             }
         }
-        //å…³é—­å¥æŸ„
+        //¹Ø±Õ¾ä±ú
         closedir($handle);
     }
     return $fileArray;
 }
 
 /*
-*	é€’å½’è·å–æŒ‡å®šè·¯å¾„ä¸‹çš„æ‰€æœ‰æ–‡ä»¶æˆ–åŒ¹é…æŒ‡å®šæ­£åˆ™çš„æ–‡ä»¶ï¼ˆä¸åŒ…æ‹¬â€œ.â€å’Œâ€œ..â€ï¼‰ï¼Œç»“æœä»¥æ•°ç»„å½¢å¼è¿”å›
+*	µİ¹é»ñÈ¡Ö¸¶¨Â·¾¶ÏÂµÄËùÓĞÎÄ¼ş»òÆ¥ÅäÖ¸¶¨ÕıÔòµÄÎÄ¼ş£¨²»°üÀ¨¡°.¡±ºÍ¡°..¡±£©£¬½á¹ûÒÔÊı×éĞÎÊ½·µ»Ø
 *	@param	string	$dir
 *	@param	string	$pattern
 *	@return	array
@@ -65,7 +65,7 @@ function deletealltemptyfolder($dir, $pattern = "")
     $arr = array();
     $dir_handle = opendir($dir);
     if ($dir_handle) {
-        // è¿™é‡Œå¿…é¡»ä¸¥æ ¼æ¯”è¾ƒï¼Œå› ä¸ºè¿”å›çš„æ–‡ä»¶åå¯èƒ½æ˜¯â€œ0â€
+        // ÕâÀï±ØĞëÑÏ¸ñ±È½Ï£¬ÒòÎª·µ»ØµÄÎÄ¼şÃû¿ÉÄÜÊÇ¡°0¡±
         while (($file = readdir($dir_handle)) !== false) {
             if ($file === '.' || $file === '..') {
                 continue;
@@ -85,7 +85,7 @@ function deletealltemptyfolder($dir, $pattern = "")
                     $arr[] = $tmp;
                 } else {
                     rmdir($tmp);
-                    echo "åˆ é™¤ç›®å½•ï¼š$tmp<p/>";
+                    echo "É¾³ıÄ¿Â¼£º$tmp<p/>";
                 }
             } else {
                 $arr[] = $tmp;
@@ -98,7 +98,7 @@ function deletealltemptyfolder($dir, $pattern = "")
 
 
 /*
-*	é€’å½’è·å–æŒ‡å®šè·¯å¾„ä¸‹çš„æ‰€æœ‰æ–‡ä»¶æˆ–åŒ¹é…æŒ‡å®šæ­£åˆ™çš„æ–‡ä»¶ï¼ˆä¸åŒ…æ‹¬â€œ.â€å’Œâ€œ..â€ï¼‰ï¼Œç»“æœä»¥æ•°ç»„å½¢å¼è¿”å›
+*	µİ¹é»ñÈ¡Ö¸¶¨Â·¾¶ÏÂµÄËùÓĞÎÄ¼ş»òÆ¥ÅäÖ¸¶¨ÕıÔòµÄÎÄ¼ş£¨²»°üÀ¨¡°.¡±ºÍ¡°..¡±£©£¬½á¹ûÒÔÊı×éĞÎÊ½·µ»Ø
 *	@param	string	$dir
 *	@param	string	$pattern
 *	@return	array
@@ -111,7 +111,7 @@ function file_list($dir, $pattern = "")
     $arr = array();
     $dir_handle = opendir($dir);
     if ($dir_handle) {
-        // è¿™é‡Œå¿…é¡»ä¸¥æ ¼æ¯”è¾ƒï¼Œå› ä¸ºè¿”å›çš„æ–‡ä»¶åå¯èƒ½æ˜¯â€œ0â€
+        // ÕâÀï±ØĞëÑÏ¸ñ±È½Ï£¬ÒòÎª·µ»ØµÄÎÄ¼şÃû¿ÉÄÜÊÇ¡°0¡±
         while (($file = readdir($dir_handle)) !== false) {
             if ($file === '.' || $file === '..') {
                 continue;
@@ -172,25 +172,25 @@ function file_list($dir, $pattern = "")
                                             }
                                             if (!$found) {
                                                 rename($tmp, $filename . ".jpg");
-                                                echo "ç§»åŠ¨ åˆ°: " . $filename . ".jpg" . "<p/><p/><p/>";
+                                                echo "ÒÆ¶¯ µ½: " . $filename . ".jpg" . "<p/><p/><p/>";
                                             } else {
-                                                echo "é‡å¤æ–‡ä»¶.......... <p/><p/><p/>";
+                                                echo "ÖØ¸´ÎÄ¼ş.......... <p/><p/><p/>";
                                                 if (unlink($tmp)) {
-                                                    echo "æˆåŠŸåˆ é™¤<p/>";
+                                                    echo "³É¹¦É¾³ı<p/>";
                                                 } else {
-                                                    echo "æ–‡ä»¶åˆ é™¤å¤±è´¥<p/>";
+                                                    echo "ÎÄ¼şÉ¾³ıÊ§°Ü<p/>";
                                                 }
                                             }
                                         } else {
                                             rename($tmp, $filename . ".jpg");
-                                            echo "ç§»åŠ¨ åˆ°: " . $filename . ".jpg" . "<p/><p/><p/>";
+                                            echo "ÒÆ¶¯ µ½: " . $filename . ".jpg" . "<p/><p/><p/>";
                                         }
                                         break;
                                     }
                                 }
                             }
                         } else {
-                            echo  "ä¸ç§»åŠ¨ï¼šæ–‡ä»¶å ä¸åŒ¹é…<p/>";
+                            echo  "²»ÒÆ¶¯£ºÎÄ¼şÃû ²»Æ¥Åä<p/>";
                         }
                     }
                 }

@@ -1,7 +1,7 @@
 <?php
 echo "<hr/>";
 $notFound = "Unavailable";
-$rootdir="C:\µº»Î’’∆¨";
+$rootdir="C:\picrom";
 if(!is_dir($rootdir)) mkdir($rootdir);
 $list = file_list("pics",'/\.jpg$/i');
 //var_dump($list);
